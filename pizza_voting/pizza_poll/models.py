@@ -14,11 +14,10 @@ class Pizza(models.Model):
     - a single pizza can collect multiple votes.
     """
 
-    name = models.CharField(max_length=500, unique=True)
-    toppings = models.ManyToManyField("Topping", related_name="pizzas")
+    toppings = models.ManyToManyField("Topping", related_name="pizzas", blank=True)
 
     def __str__(self):
-        return "Pizza {}".format(self.name)
+        return "Pizza {}".format(self.toppings)
 
 
 class Topping(models.Model):
