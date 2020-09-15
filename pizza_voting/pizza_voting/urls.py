@@ -1,18 +1,10 @@
-"""pizza_voting URL Configuration"""
+"""
+Pizza_voting URL Configuration.
+Admin url is omitted, as it makes completely no use with this structure of the project.
+"""
 
-from django.contrib import admin
 from django.urls import include, path
-from rest_framework.routers import APIRootView
-
-
-api_root_views = {
-    "pizzas": "pizzas-list",
-    "toppings": "toppings-list",
-    "votes": "votes-list",
-}
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", APIRootView.as_view(api_root_dict=api_root_views), name="api-root"),
-    path("api/", include("pizza_poll.urls")),
+    path("", include("pizza_poll.urls")),
 ]

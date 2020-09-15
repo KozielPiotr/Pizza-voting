@@ -1,51 +1,50 @@
 # pylint: disable=too-many-ancestors
 """Views for pizza_poll application."""
 
-from django.shortcuts import get_object_or_404
-from rest_framework.viewsets import ModelViewSet
+from django.db.models import Count, Sum
+
+from rest_framework import mixins
+from rest_framework.viewsets import (
+    GenericViewSet,
+    ReadOnlyModelViewSet,
+)
 
 from .models import Pizza, Topping, Vote
 from .serializers import PizzaSerializer, ToppingSerializer, VoteSerializer
 
 
-class PizzaViewSet(ModelViewSet):
+class ListCreateModelViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet,
+):
+    pass
+
+
+class PizzaViewSet(ReadOnlyModelViewSet):
     """Api to view or edit a Pizza object."""
 
-    queryset = Pizza.objects.all()
+    queryset = (
+        Pizza.objects.all()
+        .annotate(votes_count=Count("votes"))
+        .order_by("-votes_count")
+    )
     serializer_class = PizzaSerializer
 
 
-class ToppingViewSet(ModelViewSet):
+class ToppingViewSet(ListCreateModelViewSet):
     """Api to view or edit a Topping object."""
 
-    queryset = Topping.objects.all().order_by("name")
+    queryset = (
+        Topping.objects.all()
+        .annotate(votes_count=Sum("pizzas__votes"))
+        .order_by("-votes_count")
+    )
     serializer_class = ToppingSerializer
 
 
-class VoteViewSet(ModelViewSet):
+class VoteViewSet(ListCreateModelViewSet):
     """Api to view or edit a Vote object."""
 
     queryset = Vote.objects.all().order_by("-timestamp")
     serializer_class = VoteSerializer
-
-
-class RelatedVoteViewSet(ModelViewSet):
-    """
-    View of Vote object(s) related to the Pizza object.
-    This view is nested in Pizza detail or list endpoints.
-    """
-
-    serializer_class = VoteSerializer
-
-    # def get_queryset(self):
-    #     """Query of all Vote objects being related to the given Pizza."""
-    #
-    #     return Vote.objects.filter(pizza=self.get_pizza())
-
-    def get_pizza(self):
-        """Gets queryset for Pizza objects with given pk."""
-
-        query = Pizza.objects.filter(
-            pk=self.kwargs["pizza_pk"]
-        )
-        return get_object_or_404(query)
