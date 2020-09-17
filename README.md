@@ -1,8 +1,13 @@
+
 # Table of Contents
 * [Overview](#overview)
 * [Installation](#installation)
 * [Setup](#setup)
 * [Endpoints](#endpoints)
+  * [pizzas/](#pizzas)
+  * [toppings/](#toppings)
+  * [votes/](#votes)
+  
 
 # Overview
 **Pizza voting** is a backend REST application written in **Python**.  
@@ -109,6 +114,7 @@ Example:
 
 ### methods
 * *GET*: creates above view of the pizzas list.
+
 POST is not allowed due to method of *pizza* object construction It is created with a *vote* object.
 
 ## pizzas/\<pk\>
@@ -133,6 +139,7 @@ Example:
 
 ### methods
 * *GET* returns above view of the pizzas list;
+
 PUT and PATCH are not allowed due to method of *pizza* object construction It is created with a *vote* object and should not be editable. Editing pizza's topping would result in creation of the new composition, which is made through creating new *vote*.
 Lack of authentication causes also (besided above) not allowing DELETE method.
 
