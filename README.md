@@ -84,6 +84,7 @@ python manage.py prepopulate_db
 * *url*: URL to detailed view of single pizza object;
 * *toppings*: topping objects related to pizza represented by list of toppins names;
 * *votes_count*: an amount of votes casted for the pizza composition.
+
 Example:
 ```json
 [
@@ -117,6 +118,7 @@ POST is not allowed due to method of *pizza* object construction It is created w
 * *url*: URL to detailed view of single pizza object;
 * *toppings*: topping objects related to pizza represented by list of toppins names;
 * *votes_count*: an amount of votes casted for the pizza composition.
+
 Example:
 ```json
 {
@@ -140,6 +142,7 @@ Lack of authentication causes also (besided above) not allowing DELETE method.
 ### fields
 * *votes_count*: an amount of votes for compositions, where this topping is present;
 * *name*: name of the topping.
+
 Example:
 ```json
 [
@@ -163,3 +166,35 @@ Example:
 * *POST* creates new *topping* object. Accepts only "name" field as a string.
   
 There is no detailed view of this endpoint. Existing toppings should not be changed or deleted. Lack of this mechanism is caused by a lack of any authentication system.
+
+## votes/
+**votes/** endpoint returns list of all *votes* objects.
+
+### fields
+* *timestamp*: time of the *vote* creation;
+* *pizza*: URL to detailed view of the related *pizza* object;
+* *toppings*: **write only**, multiple choice field with toppings names.
+
+Example:
+```json
+[
+    {
+        "timestamp": "2020-09-17T07:55:10.256860Z",
+        "pizza": "http://localhost:8000/pizzas/6/"
+    },
+    {
+        "timestamp": "2020-09-15T22:32:49.864449Z",
+        "pizza": "http://localhost:8000/pizzas/5/"
+    },
+    {
+        "timestamp": "2020-09-15T22:32:49.722441Z",
+        "pizza": "http://localhost:8000/pizzas/5/"
+    }
+]
+```
+
+### methods
+* *GET* returns above view of the votes list;
+* *POST* creates new *vote* object. Accepts only *toppings* field with list of toppings represented by their names as strings. Chosen toppings combination is searched through existing *pizza* objects. If found, new *vote* is related to it. If not, beside of the nev *vote*, new *pizza* object is created and related to new *vote*.
+
+Due to creation method this endpoint doesn't have a detailed view. Also, *votes* can not be deleted due to the lack of any authentication system.
